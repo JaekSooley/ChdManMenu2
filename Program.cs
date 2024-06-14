@@ -158,9 +158,7 @@ void CueGdiIsoToChd()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"createcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"createcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
         {
             if (deleteFiles)
             {
@@ -205,9 +203,7 @@ void CueGdiIsoToChdDvd()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"createdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"createdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
         {
             if (deleteFiles)
             {
@@ -252,9 +248,7 @@ void CueGdiIsoToChdPsp()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"createdvd -hs 2048 -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"createdvd -hs 2048 -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
         {
             if (deleteFiles)
             {
@@ -299,9 +293,7 @@ void ExtractDvdToIso()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"extractdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".iso")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"extractdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".iso")}\""))
         {
             if (deleteFiles)
             {
@@ -346,9 +338,7 @@ void ExtractCdChdToCueBin()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".cue")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".cue")}\""))
         {
             if (deleteFiles)
             {
@@ -393,9 +383,7 @@ void ExtractCdChdToGdi()
     {
         string file = files[i];
 
-        int exitCode = RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".gdi")}\"");
-
-        if (exitCode == 0)
+        if (RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".gdi")}\""))
         {
             if (deleteFiles)
             {
@@ -464,7 +452,7 @@ void DeleteFile(string file)
 }
 
 
-int RunChdman(string arg = "")
+bool RunChdman(string arg = "")
 {
     using (System.Diagnostics.Process p = new System.Diagnostics.Process())
     {
@@ -473,7 +461,10 @@ int RunChdman(string arg = "")
         p.Start();
         p.WaitForExit();
 
-        return p.ExitCode;
+        // Return true if chdman is successful
+        // chdman gives exit code 0 if there are no problems (as far as I know lol)
+        if (p.ExitCode == 0) return true;
+        else return false;
     }
 }
 
