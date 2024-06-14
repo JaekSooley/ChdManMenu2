@@ -130,7 +130,10 @@ void ProcessMenu(string? dir = null)
         }
 
         UI.Header("Done!", false);
+
+        GetFiles();
         PrintFiles();
+
         UI.Pause();
     }
     else
@@ -491,13 +494,12 @@ void GetFiles(string? dir = null)
 
 void PrintFiles()
 {
-    UI.Write("Files:");
     UI.Write();
+    UI.Write("Directory contents:");
     UI.Write($"\tFound {cueFiles.Count()} .CUE files ({binFiles.Count()} .bin files)");
     UI.Write($"\tFound {isoFiles.Count()} .ISO files");
     UI.Write($"\tFound {gdiFiles.Count()} .GDI files");
     UI.Write($"\tFound {chdFiles.Count()} .CHD files");
-    UI.Write();
     UI.Write($"Total: {cueFiles.Count() + binFiles.Count() + isoFiles.Count() + gdiFiles.Count() + chdFiles.Count()} file(s)");
     UI.Write();
 }
