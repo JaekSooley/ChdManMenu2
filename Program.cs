@@ -1,8 +1,8 @@
 ﻿using ConsoleUI;
-using System.Reflection;
 
 
-string? rootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+string? rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
 string? chdmanPath = null;
 string logPath = "chdman_log.txt";
 
@@ -36,7 +36,7 @@ void MainMenu()
         Console.Clear();
 
         UI.Header("Main Menu");
-        UI.Write($"chdman path: {chdmanPath}");
+        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
         UI.Write();
         UI.Write("Enter directory containing files to process.");
         UI.Write();
@@ -496,11 +496,11 @@ void PrintFiles()
 {
     UI.Write();
     UI.Write("Directory contents:");
-    UI.Write($"\tFound {cueFiles.Count()} .CUE files ({binFiles.Count()} .bin files)");
+    UI.Write($"\tFound {cueFiles.Count()} .CUE files");
+    UI.Write($"\tFound {binFiles.Count()} .BIN files");
     UI.Write($"\tFound {isoFiles.Count()} .ISO files");
     UI.Write($"\tFound {gdiFiles.Count()} .GDI files");
     UI.Write($"\tFound {chdFiles.Count()} .CHD files");
-    UI.Write($"Total: {cueFiles.Count() + binFiles.Count() + isoFiles.Count() + gdiFiles.Count() + chdFiles.Count()} file(s)");
     UI.Write();
 }
 
@@ -512,7 +512,6 @@ bool FindChdmanExe()
     if (File.Exists(tempPath))
     {
         chdmanPath = tempPath;
-        UI.Write("chdman.exe found in root directory!");
         return true;
     }
     else
@@ -537,6 +536,7 @@ bool GetChdmanExe()
     UI.Write("chdman.exe was not found in root directory.");
     UI.Write();
     UI.Write("Please enter a valid path to chdman.exe");
+    UI.Write();
 
     string path = Input.GetFile();
     
@@ -545,8 +545,6 @@ bool GetChdmanExe()
         if (Path.GetFileName(path) == "chdman.exe")
         {
             chdmanPath = path;
-            UI.Header("File found!");
-            UI.Write($"Path: \"{chdmanPath}\"");
             return true;
         }
         else
