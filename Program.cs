@@ -27,18 +27,19 @@ if (FindChdmanExe())
 // HERE LIE METHODS
 void MainMenu()
 {
-    bool active = true;
-    while (active)
-    {
+    //bool active = true;
+    //while (active)
+    //{
         // Reset on menu loop
-        GetFiles(null);
-        deleteFiles = false;
-        Console.Clear();
+        //GetFiles(null);
+        //deleteFiles = false;
+        //Console.Clear();
 
         UI.Header("Main Menu");
         UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
         UI.Write();
         UI.Write("Enter directory containing files to process.");
+        UI.Write("Leave blank to use this application's directory.");
         UI.Write();
 
         string workingDirectory = Input.GetDirectory();
@@ -53,16 +54,19 @@ void MainMenu()
             else
             {
                 UI.Error("Invalid directory!");
-                active = false;
-                continue;
+                //active = false;
+                //continue;
             }
         }
         else
         {
-            UI.Error("No directory specified");
+            workingDirectory = rootDirectory;
+
+            GetFiles(workingDirectory);
+            ProcessMenu(workingDirectory);
         }
     }
-}
+//}
 
 
 void ProcessMenu(string? dir = null)
@@ -84,6 +88,7 @@ void ProcessMenu(string? dir = null)
 
         int input = Input.GetInteger();
 
+        UI.Header("Process Settings");
         UI.Write("\nDelete source files when done?");
         UI.Option("[1] No");
         UI.Option("[2] Yes");
@@ -98,6 +103,8 @@ void ProcessMenu(string? dir = null)
             case 2:
                 deleteFiles = true;
                 break;
+
+            // Keep files by default
             default:
                 deleteFiles = false;
                 break;
@@ -128,13 +135,6 @@ void ProcessMenu(string? dir = null)
             default:
                 break;
         }
-
-        UI.Header("Done!", false);
-
-        GetFiles();
-        PrintFiles();
-
-        UI.Pause();
     }
     else
     {
@@ -173,6 +173,9 @@ void CueGdiIsoToChd()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -182,9 +185,8 @@ void CueGdiIsoToChd()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -218,6 +220,9 @@ void CueGdiIsoToChdDvd()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -227,9 +232,8 @@ void CueGdiIsoToChdDvd()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -263,6 +267,9 @@ void CueGdiIsoToChdPsp()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -272,9 +279,8 @@ void CueGdiIsoToChdPsp()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -308,6 +314,9 @@ void ExtractDvdToIso()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -317,9 +326,8 @@ void ExtractDvdToIso()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -353,6 +361,9 @@ void ExtractCdChdToCueBin()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -362,9 +373,8 @@ void ExtractCdChdToCueBin()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -398,6 +408,9 @@ void ExtractCdChdToGdi()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
+    UI.Write("------------------------------------------");
+    UI.Write("\nDone!\n");
+
     if (failList.Count > 0)
     {
         UI.Write($"{failList.Count} file(s) failed to process:");
@@ -407,9 +420,8 @@ void ExtractCdChdToGdi()
             UI.Write($"{file}");
         }
         UI.Write();
+        UI.Pause();
     }
-
-    UI.Pause();
 }
 
 
@@ -496,11 +508,12 @@ void PrintFiles()
 {
     UI.Write();
     UI.Write("Directory contents:");
-    UI.Write($"\tFound {cueFiles.Count()} .CUE files");
-    UI.Write($"\tFound {binFiles.Count()} .BIN files");
-    UI.Write($"\tFound {isoFiles.Count()} .ISO files");
-    UI.Write($"\tFound {gdiFiles.Count()} .GDI files");
-    UI.Write($"\tFound {chdFiles.Count()} .CHD files");
+    UI.Write();
+    UI.Write($"Found {cueFiles.Count()} .CUE files");
+    UI.Write($"Found {binFiles.Count()} .BIN files");
+    UI.Write($"Found {isoFiles.Count()} .ISO files");
+    UI.Write($"Found {gdiFiles.Count()} .GDI files");
+    UI.Write($"Found {chdFiles.Count()} .CHD files");
     UI.Write();
 }
 
