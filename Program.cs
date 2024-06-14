@@ -13,7 +13,7 @@ List<string> binFiles = new();
 List<string> gdiFiles = new();
 
 bool deleteFiles = false;
-
+bool usingApplicationDirectory = false;
 
 
 // MAIN
@@ -27,56 +27,52 @@ if (FindChdmanExe())
 // HERE LIE METHODS
 void MainMenu()
 {
-    //bool active = true;
-    //while (active)
-    //{
-        // Reset on menu loop
-        //GetFiles(null);
-        //deleteFiles = false;
-        //Console.Clear();
+    UI.Header("Main Menu");
+    UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
+    UI.Write($"Application dir: \"{rootDirectory}\"");
+    UI.Write();
+    UI.Write("Enter directory containing files to process.");
+    UI.Write("Leave blank to use this application's directory.");
+    UI.Write();
 
-        UI.Header("Main Menu");
-        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
-        UI.Write();
-        UI.Write("Enter directory containing files to process.");
-        UI.Write("Leave blank to use this application's directory.");
-        UI.Write();
+    string workingDirectory = Input.GetDirectory();
 
-        string workingDirectory = Input.GetDirectory();
-
-        if (workingDirectory != "")
+    if (workingDirectory != "")
+    {
+        if (Path.Exists(workingDirectory))
         {
-            if (Path.Exists(workingDirectory))
-            {
-                GetFiles(workingDirectory);
-                ProcessMenu(workingDirectory);
-            }
-            else
-            {
-                UI.Error("Invalid directory!");
-                //active = false;
-                //continue;
-            }
-        }
-        else
-        {
-            workingDirectory = rootDirectory;
-
             GetFiles(workingDirectory);
             ProcessMenu(workingDirectory);
         }
+        else
+        {
+            UI.Error("Invalid directory!");
+        }
     }
-//}
+    else
+    {
+        usingApplicationDirectory = true;
+        workingDirectory = rootDirectory;
+
+        GetFiles(workingDirectory);
+        ProcessMenu(workingDirectory);
+    }
+}
 
 
 void ProcessMenu(string? dir = null)
 {
     if (dir != null)
     {
-        UI.Header("Select Process");
+        UI.Header("Valid Files");
+        if (usingApplicationDirectory)
+        {
+            UI.Write("Using current application directory.");
+        }
 
         PrintFiles();
 
+        UI.Header("Select Process", false);
         UI.Option("[1] Create CD CHD file(s) - PSX, Dreamcast, NeoGeo CD, (some) PS2");
         UI.Option("[2] Create DVD CHD file(s) - PS2 (default hunk size)");
         UI.Option("[3] Create DVD CHD file(s) - PSP (2048 hunk size)");
@@ -85,55 +81,61 @@ void ProcessMenu(string? dir = null)
         UI.Option("[5] Extract CD CHD to CUE/BIN");
         UI.Option("[6] Extract CD CHD to GDI");
         UI.Write();
+        UI.Option("[0] Cancel");
+        UI.Write();
 
         int input = Input.GetInteger();
 
-        UI.Header("Process Settings");
-        UI.Write("\nDelete source files when done?");
-        UI.Option("[1] No");
-        UI.Option("[2] Yes");
-
-        int inputDel = Input.GetInteger(1);
-
-        switch (inputDel)
+        if (input != 0)
         {
-            case 1:
-                deleteFiles = false;
-                break;
-            case 2:
-                deleteFiles = true;
-                break;
+            UI.Header("Process Settings");
+            UI.Write("\nDelete source files when done?");
+            UI.Option("[1] No");
+            UI.Option("[2] Yes");
 
-            // Keep files by default
-            default:
-                deleteFiles = false;
-                break;
+            int inputDel = Input.GetInteger(1);
+
+            switch (inputDel)
+            {
+                case 1:
+                    deleteFiles = false;
+                    break;
+                case 2:
+                    deleteFiles = true;
+                    break;
+                default:
+                    deleteFiles = false;
+                    break;
+            }
+
+            switch (input)
+            {
+                case 1:
+                    CueGdiIsoToChd();
+                    break;
+                case 2:
+                    CueGdiIsoToChdDvd();
+                    break;
+                case 3:
+                    CueGdiIsoToChdPsp();
+                    break;
+                case 4:
+                    ExtractDvdToIso();
+                    break;
+                case 5:
+                    ExtractCdChdToCueBin();
+                    break;
+                case 6:
+                    ExtractCdChdToGdi();
+                    break;
+                default:
+                    break;
+            }
         }
-
-        switch (input)
+        else
         {
-            case 1:
-                CueGdiIsoToChd();
-                break;
-            case 2:
-                CueGdiIsoToChdDvd();
-                break;
-            case 3:
-                CueGdiIsoToChdPsp();
-                break;
-
-            case 4:
-                ExtractDvdToIso();
-                break;
-            case 5:
-                ExtractCdChdToCueBin();
-                break;
-            case 6:
-                ExtractCdChdToGdi();
-                break;
-
-            default:
-                break;
+            UI.Header("Oops");
+            UI.Write("Bye!");
         }
     }
     else
