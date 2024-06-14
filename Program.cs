@@ -72,10 +72,10 @@ void ProcessMenu(string? dir = null)
 
         PrintFiles();
 
-        UI.Header("Select Process", false);
+        UI.Header("Choose Option", false);
         UI.Option("[1] Create CD CHD file(s) - PSX, Dreamcast, NeoGeo CD, (some) PS2");
         UI.Option("[2] Create DVD CHD file(s) - PS2 (default hunk size)");
-        UI.Option("[3] Create DVD CHD file(s) - PSP (2048 hunk size)");
+        UI.Option("[3] Create DVD CHD file(s) - PPSSPP (2048 hunk size)");
         UI.Write();
         UI.Option("[4] Extract DVD CHD to ISO");
         UI.Option("[5] Extract CD CHD to CUE/BIN");
@@ -88,8 +88,8 @@ void ProcessMenu(string? dir = null)
 
         if (input != 0)
         {
-            UI.Header("Process Settings");
-            UI.Write("\nDelete source files when done?");
+            UI.Header("Delete Files?");
+            UI.Write("\nDelete source file(s) after compression/extraction?");
             UI.Option("[1] No");
             UI.Option("[2] Yes");
 
