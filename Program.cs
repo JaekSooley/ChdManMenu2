@@ -29,9 +29,9 @@ void MainMenu()
 {
     UI.Header("Main Menu");
     UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
-    UI.Write($"Application dir: \"{rootDirectory}\"");
     UI.Write();
     UI.Write("Enter directory containing files to process.");
+    UI.Write();
     UI.Write("Leave blank to use this application's directory.");
     UI.Write();
 
