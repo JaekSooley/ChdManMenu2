@@ -4,7 +4,6 @@
 string? rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 string? chdmanPath = null;
-string logPath = "chdman_log.txt";
 
 List<string> chdFiles = new();
 List<string> isoFiles = new();
@@ -156,18 +155,24 @@ void CueGdiIsoToChd()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (RunChdman($"createcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
+        if (RunChdman($"createcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -185,8 +190,8 @@ void CueGdiIsoToChd()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -201,18 +206,24 @@ void CueGdiIsoToChdDvd()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (RunChdman($"createdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
+        if (RunChdman($"createdvd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -230,8 +241,8 @@ void CueGdiIsoToChdDvd()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -246,18 +257,24 @@ void CueGdiIsoToChdPsp()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (RunChdman($"createdvd -hs 2048 -i \"{file}\" -o \"{Path.ChangeExtension(file, ".chd")}\""))
+        if (RunChdman($"createdvd -hs 2048 -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+            
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -275,8 +292,8 @@ void CueGdiIsoToChdPsp()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -291,18 +308,24 @@ void ExtractDvdToIso()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".iso");
 
-        if (RunChdman($"extractdvd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".iso")}\""))
+        if (RunChdman($"extractdvd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -320,8 +343,8 @@ void ExtractDvdToIso()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -336,18 +359,24 @@ void ExtractCdChdToCueBin()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".cue");
 
-        if (RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".cue")}\""))
+        if (RunChdman($"extractcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -365,8 +394,8 @@ void ExtractCdChdToCueBin()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -381,18 +410,24 @@ void ExtractCdChdToGdi()
 
     for (int i = 0; i < files.Count; i++)
     {
-        string file = files[i];
+        string inputFile = files[i];
+        string outputFile = Path.ChangeExtension(inputFile, ".gdi");
 
-        if (RunChdman($"extractcd -i \"{file}\" -o \"{Path.ChangeExtension(file, ".gdi")}\""))
+        if (RunChdman($"extractcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
+            if (File.Exists(outputFile))
+            {
+                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+            }
+
             if (deleteFiles)
             {
-                DeleteFile(file);
+                DeleteFile(inputFile);
             }
         }
         else
         {
-            failList.Add(file);
+            failList.Add(inputFile);
         }
 
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
@@ -410,8 +445,8 @@ void ExtractCdChdToGdi()
             UI.Write($"{file}");
         }
         UI.Write();
-        UI.Pause();
     }
+    UI.Pause();
 }
 
 
@@ -419,7 +454,6 @@ void DeleteFile(string file)
 {
     UI.Write();
 
-    // Delete cue files and their bin files
     if (Path.GetExtension(file).ToLower() == ".cue")
     {
         foreach(string line in File.ReadLines(file))
@@ -429,7 +463,7 @@ void DeleteFile(string file)
                 string[] list = line.Split('"');
                 string binName = list[1];
 
-                string path = Path.GetDirectoryName(file);
+                string? path = Path.GetDirectoryName(file);
                 string binFile = $"{path}\\{binName}";
 
                 if (File.Exists(binFile))
@@ -443,7 +477,6 @@ void DeleteFile(string file)
         File.Delete(file);
         UI.Write($"Deleted \"{file}\"");
     }
-    // Delete everything else
     else
     {
         File.Delete(file);
@@ -494,6 +527,12 @@ void GetFiles(string? dir = null)
         binFiles.Clear();
         gdiFiles.Clear();
     }
+}
+
+
+double GetFileSizeMb(string file)
+{
+    return new System.IO.FileInfo(file).Length / 1000000;
 }
 
 
