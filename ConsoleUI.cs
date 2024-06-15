@@ -9,8 +9,8 @@
             int headerWidth = 48;
             int textWidth = header.Length + 2;
             int paddingWidth = (headerWidth - textWidth) / 2;
-														string paddingString = "";
-														for (int i = 0; i < paddingWidth; i++) paddingString += "=";
+			string paddingString = "";
+			for (int i = 0; i < paddingWidth; i++) paddingString += "=";
 
             string displayText = string.Empty;
 
