@@ -1,4 +1,5 @@
 ﻿using ConsoleUI;
+using System.IO.Compression;
 
 
 string? rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -162,13 +163,23 @@ void CueGdiIsoToChd()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
 
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -213,13 +224,23 @@ void CueGdiIsoToChdDvd()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
 
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -264,13 +285,23 @@ void CueGdiIsoToChdPsp()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
-            
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -315,13 +346,23 @@ void ExtractDvdToIso()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
 
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -366,13 +407,23 @@ void ExtractCdChdToCueBin()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
 
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -417,13 +468,23 @@ void ExtractCdChdToGdi()
         {
             if (File.Exists(outputFile))
             {
-                UI.Write($"{GetFileSizeMb(inputFile)} MB -> {GetFileSizeMb(outputFile)} MB");
+                double oldSize = GetFileSizeMb(inputFile);
+                double newSize = GetFileSizeMb(outputFile);
+
+                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                {
+                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    {
+                        oldSize += GetFileSizeMb(binFile);
+                    }
+                }
+
+                UI.Write();
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
 
-            if (deleteFiles)
-            {
-                DeleteFile(inputFile);
-            }
+            if (deleteFiles) DeleteFile(inputFile);
+            else UI.Write("No files deleted.");
         }
         else
         {
@@ -456,7 +517,30 @@ void DeleteFile(string file)
 
     if (Path.GetExtension(file).ToLower() == ".cue")
     {
-        foreach(string line in File.ReadLines(file))
+        foreach(string binFile in GetBinFilesFromCue(file))
+        {
+            File.Delete(binFile);
+            UI.Write($"Deleted \"{binFile}\"");
+        }
+
+        File.Delete(file);
+        UI.Write($"Deleted \"{file}\"");
+    }
+    else
+    {
+        File.Delete(file);
+        UI.Write($"Deleted \"{file}\"");
+    }
+}
+
+
+List<string> GetBinFilesFromCue(string file)
+{
+    List<string> output = new();
+
+    if (File.Exists(file) && Path.GetExtension(file).ToLower() == ".cue")
+    {
+        foreach (string line in File.ReadLines(file))
         {
             if (line.Contains("FILE "))
             {
@@ -468,20 +552,13 @@ void DeleteFile(string file)
 
                 if (File.Exists(binFile))
                 {
-                    File.Delete(binFile);
-                    UI.Write($"Deleted \"{binName}\"");
+                    output.Add(binFile);
                 }
             }
         }
+    }
 
-        File.Delete(file);
-        UI.Write($"Deleted \"{file}\"");
-    }
-    else
-    {
-        File.Delete(file);
-        UI.Write($"Deleted \"{file}\"");
-    }
+    return output;
 }
 
 
