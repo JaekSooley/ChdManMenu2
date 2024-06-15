@@ -111,20 +111,17 @@ void ProcessMenu(string? dir = null)
                 }
             }
 
-            if (cueFiles.Count > 0)
-            {
-                UI.Header("Move Output File(s)?");
-                UI.Write("Move CHD files into parent directory of source CUE/BIN files?");
-                UI.Write();
-                UI.Write("Use this if each CUE file is contained within its own folder with associated BIN files.");
-                UI.Write();
-                UI.Option("[1] No");
-                UI.Option("[2] Yes");
+            UI.Header("Move to Parent Directory?");
+            UI.Write("Move output CHD files into source files' parent directory?");
+            UI.Write();
+            UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.");
+            UI.Write();
+            UI.Option("[1] No");
+            UI.Option("[2] Yes");
 
-
-                int? inputMoveUp = Input.GetInteger(1);
-                if (inputMoveUp == 2) moveUpFolder = true;
-            }
+            moveUpFolder = false;
+            int? inputMoveUp = Input.GetInteger(1);
+            if (inputMoveUp == 2) moveUpFolder = true;
 
             switch (input)
             {
