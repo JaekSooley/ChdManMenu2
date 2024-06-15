@@ -1,6 +1,6 @@
 # ChdManMenu2
 
-A console application to simplify the use of chdman.exe. 
+A console application to simplify batch processing with chdman. 
 
 This is a re-write of [chdman-menu](https://github.com/JaekSooley/chdman-menu) in C#.
 
