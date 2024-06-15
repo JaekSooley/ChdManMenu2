@@ -34,9 +34,9 @@ void MainMenu()
     UI.Write("Leave blank to use this application's directory.");
     UI.Write();
 
-    string workingDirectory = Input.GetDirectory();
+    string? workingDirectory = Input.GetDirectory();
 
-    if (workingDirectory != "")
+    if (workingDirectory != null)
     {
         if (Path.Exists(workingDirectory))
         {
@@ -83,16 +83,16 @@ void ProcessMenu(string? dir = null)
         UI.Option("[0] Cancel");
         UI.Write();
 
-        int input = Input.GetInteger();
+        int? input = Input.GetInteger();
 
-        if (input != 0)
+        if (input != null)
         {
             UI.Header("Delete Files?");
             UI.Write("\nDelete source file(s) after compression/extraction?");
             UI.Option("[1] No");
             UI.Option("[2] Yes");
 
-            int inputDel = Input.GetInteger(1);
+            int? inputDel = Input.GetInteger(1);
 
             switch (inputDel)
             {
@@ -626,6 +626,7 @@ bool FindChdmanExe()
         UI.Write();
         UI.Write("Please enter a valid path to chdman.exe");
         UI.Write();
+
         chdmanPath = null;
 
         if (GetChdmanExe())
@@ -642,8 +643,7 @@ bool FindChdmanExe()
 
 bool GetChdmanExe()
 {
-
-    string path = Input.GetFile();
+    string? path = Input.GetFile();
     
     if (File.Exists(path))
     {

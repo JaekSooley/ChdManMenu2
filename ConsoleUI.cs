@@ -4,11 +4,22 @@
     {
         public static void Header(string header, bool clearPreviousScreen = true)
         {
-            Console.WriteLine("");
             if (clearPreviousScreen) Console.Clear();
-            else Console.WriteLine("------------------------------------------");
-            Console.WriteLine(header.ToUpper());
-            Console.WriteLine("------------------------------------------");
+
+            int headerWidth = 48; // Number of characters for the header width
+            int textWidth = header.Length + 2;
+            int padding = (headerWidth - textWidth) / 2;
+            string displayText = string.Empty;
+
+            Console.WriteLine("");
+
+            for (int i = 0; i < padding; i++) displayText += "=";
+
+            displayText += $" {header.ToUpper()} ";
+
+            for (int i = 0; i < padding; i++) displayText += "=";
+
+            Console.WriteLine(displayText);
             Console.WriteLine("");
         }
 
@@ -61,110 +72,131 @@
 
 
         // Used by the Input class, don't call directly.
-        public static void Input(string type, string defaultValue = "")
+        public static void Input(string type, string? defaultValue = null)
         {
             Console.WriteLine("");
-            if (defaultValue == "") Console.Write($"Input ({type}): ");
+            if (defaultValue == null) Console.Write($"Input ({type}): "); 
             else Console.Write($"Input ({type}): [{defaultValue}] ");
         }
     }
 
     public class Input
     {
-        public static bool GetBoolean(bool defaultValue = false)
+        public static bool? GetBoolean(bool? defaultValue = null)
         {
             string type = "bool";
-            UI.Input(type, defaultValue.ToString());
+            bool? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue.ToString());
+            else UI.Input(type);
+
             string input = ReadLine();
-            bool output = defaultValue;
+
             if (bool.TryParse(input, out bool val)) output = val;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
-        public static int GetInteger(int defaultValue = 0)
+        public static int? GetInteger(int? defaultValue = null)
         {
             string type = "int";
-            UI.Input(type, defaultValue.ToString());
+            int? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue.ToString());
+            else UI.Input(type);
+
             string input = ReadLine();
-            int output = defaultValue;
+
             if (int.TryParse(input, out int val)) output = val;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
-        public static float GetFloat(float defaultValue = 0f)
+        public static float? GetFloat(float? defaultValue = null)
         {
             string type = "float";
-            UI.Input(type, defaultValue.ToString());
+            float? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue.ToString());
+            else UI.Input(type);
+
             string input = ReadLine();
-            float output = defaultValue;
+
             if (float.TryParse(input, out float val)) output = val;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
-        public static double GetDouble(double defaultValue = 0)
+        public static double? GetDouble(double? defaultValue = null)
         {
             string type = "double";
-            UI.Input(type, defaultValue.ToString());
+            double? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue.ToString());
+            else UI.Input(type);
+
             string input = ReadLine();
-            double output = defaultValue;
+
             if (double.TryParse(input, out double val)) output = val;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
 
-        public static decimal GetDecimal(decimal defaultValue = 0m)
+        public static decimal? GetDecimal(decimal? defaultValue = null)
         {
             string type = "decimal";
-            UI.Input(type, defaultValue.ToString());
+            decimal? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue.ToString());
+            else UI.Input(type);
+
             string input = ReadLine();
-            decimal output = defaultValue;
+
             if (decimal.TryParse(input, out decimal val)) output = val;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
-        public static string GetString(string defaultValue = "")
+        public static string? GetString(string? defaultValue = null)
         {
             string type = "string";
-            UI.Input(type, defaultValue.ToString());
+            string? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue);
+            else UI.Input(type);
+
             string input = ReadLine();
-            string output = defaultValue;
+
             if (input != "") output = input;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
-        public static string GetFile(string defaultValue = "")
+        public static string? GetFile(string? defaultValue = null)
         {
             string type = "file path";
-            UI.Input(type, defaultValue.ToString());
+            string? output = defaultValue;
+
+            if (defaultValue != null) UI.Input(type, defaultValue);
+            else UI.Input(type);
+
             string input = ReadLine().Replace("\"", "");
-            string output = defaultValue;
 
             if (File.Exists(input)) output = input;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
 
-        public static string GetDirectory(string defaultValue = "")
+        public static string? GetDirectory(string? defaultValue = null)
         {
             string type = "directory";
-            UI.Input(type, defaultValue.ToString());
+            string? output = defaultValue;
+
+            UI.Input(type, defaultValue);
+
             string input = ReadLine().Replace("\"", "");
-            string output = defaultValue;
 
             if (Directory.Exists(input)) output = input;
-            else InputInvalid(type, input, defaultValue.ToString());
 
             return output;
         }
