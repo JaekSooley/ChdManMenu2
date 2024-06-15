@@ -405,7 +405,7 @@ void ExtractCdChdToCueBin()
                 {
                     foreach (string binFile in GetBinFilesFromCue(outputFile))
                     {
-                        oldSize += GetFileSizeMb(binFile);
+                        newSize += GetFileSizeMb(binFile);
                     }
                 }
 

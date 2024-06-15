@@ -6,7 +6,7 @@
         {
             if (clearPreviousScreen) Console.Clear();
 
-            int headerWidth = 48; // Number of characters for the header width
+            int headerWidth = 48;
             int textWidth = header.Length + 2;
             int padding = (headerWidth - textWidth) / 2;
             string displayText = string.Empty;
