@@ -21,7 +21,8 @@ if (FindChdmanExe())
 {
     MainMenu();
 }
-
+UI.Header("Goodbye", true);
+UI.Pause();
 
 
 // HERE LIE METHODS
@@ -212,8 +213,7 @@ void CueGdiIsoToChd()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -225,6 +225,7 @@ void CueGdiIsoToChd()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
@@ -280,8 +281,7 @@ void CueGdiIsoToChdDvd()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -293,6 +293,7 @@ void CueGdiIsoToChdDvd()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
@@ -348,8 +349,7 @@ void CueGdiIsoToChdPsp()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -361,6 +361,7 @@ void CueGdiIsoToChdPsp()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
@@ -401,8 +402,7 @@ void ExtractDvdToIso()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -414,6 +414,7 @@ void ExtractDvdToIso()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
@@ -462,8 +463,7 @@ void ExtractCdChdToCueBin()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -475,6 +475,7 @@ void ExtractCdChdToCueBin()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
@@ -515,8 +516,7 @@ void ExtractCdChdToGdi()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
     }
 
-    UI.Write("------------------------------------------");
-    UI.Write("\nDone!\n");
+    UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
@@ -528,6 +528,7 @@ void ExtractCdChdToGdi()
         }
         UI.Write();
     }
+
     UI.Pause();
 }
 
