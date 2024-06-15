@@ -3,7 +3,6 @@ using System.IO.Compression;
 
 
 string? rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
 string? chdmanPath = null;
 
 List<string> chdFiles = new();
@@ -622,6 +621,11 @@ bool FindChdmanExe()
     }
     else
     {
+        UI.Header("Chdman not found!");
+        UI.Write($"Chdman was not found at the expected location \"{tempPath}\"");
+        UI.Write();
+        UI.Write("Please enter a valid path to chdman.exe");
+        UI.Write();
         chdmanPath = null;
 
         if (GetChdmanExe())
@@ -638,11 +642,6 @@ bool FindChdmanExe()
 
 bool GetChdmanExe()
 {
-    UI.Header("Enter Application Path");
-    UI.Write("chdman.exe was not found in root directory.");
-    UI.Write();
-    UI.Write("Please enter a valid path to chdman.exe");
-    UI.Write();
 
     string path = Input.GetFile();
     
