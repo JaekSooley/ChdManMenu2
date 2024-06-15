@@ -11,6 +11,7 @@ List<string> cueFiles = new();
 List<string> binFiles = new();
 List<string> gdiFiles = new();
 
+bool moveUpFolder = false;
 bool deleteFiles = false;
 bool usingApplicationDirectory = false;
 
@@ -110,6 +111,21 @@ void ProcessMenu(string? dir = null)
                 }
             }
 
+            if (cueFiles.Count > 0)
+            {
+                UI.Header("Move Output File(s)?");
+                UI.Write("Move CHD files into parent directory of source CUE/BIN files?");
+                UI.Write();
+                UI.Write("Use this if each CUE file is contained within its own folder with associated BIN files.");
+                UI.Write();
+                UI.Option("[1] No");
+                UI.Option("[2] Yes");
+
+
+                int? inputMoveUp = Input.GetInteger(1);
+                if (inputMoveUp == 2) moveUpFolder = true;
+            }
+
             switch (input)
             {
                 case 1:
@@ -154,12 +170,20 @@ void CueGdiIsoToChd()
     List<string> files = isoFiles.Concat(cueFiles).Concat(gdiFiles).ToList();
     List<string> failList = new();
 
+    UI.Write();
     UI.Write($"Processing {files.Count} file(s)...\n");
 
     for (int i = 0; i < files.Count; i++)
     {
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
+
+        if (moveUpFolder)
+        {
+            string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
+
+            if (parentDir != null) outputFile = parentDir + Path.GetFileName(outputFile);
+        }
 
         if (RunChdman($"createcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
@@ -222,6 +246,13 @@ void CueGdiIsoToChdDvd()
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
+        if (moveUpFolder)
+        {
+            string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
+
+            if (parentDir != null) outputFile = parentDir + Path.GetFileName(outputFile);
+        }
+
         if (RunChdman($"createdvd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
             if (File.Exists(outputFile))
@@ -282,6 +313,13 @@ void CueGdiIsoToChdPsp()
     {
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
+
+        if (moveUpFolder)
+        {
+            string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
+
+            if (parentDir != null) outputFile = parentDir + Path.GetFileName(outputFile);
+        }
 
         if (RunChdman($"createdvd -hs 2048 -i \"{inputFile}\" -o \"{outputFile}\""))
         {
@@ -508,9 +546,16 @@ void DeleteFile(string file)
             File.Delete(binFile);
             UI.Write($"Deleted \"{binFile}\"");
         }
-
+        
         File.Delete(file);
         UI.Write($"Deleted \"{file}\"");
+
+        string? dir = Path.GetDirectoryName(file);
+        if (dir != null && moveUpFolder)
+        {
+            Directory.Delete(dir);
+            UI.Write($"Deleted directory \"{dir}\"");
+        }
     }
     else
     {
