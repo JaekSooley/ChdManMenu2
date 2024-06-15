@@ -8,6 +8,7 @@ This is a re-write of [chdman-menu](https://github.com/JaekSooley/chdman-menu) i
 - Pre-defined parameters for creating and extracting CHD files (ISO, CUE/BIN, GDI).
 - Option to delete each file as it's compressed/extracted.
 - Deletes CUE files _and associated BIN files_.
+- Option to move output files into parent directory of source file, deleting source directory if desired. This is good if the source files are each in individual folders.
 - Shows size of output files compared to input files after compression/extraction.
 - Works with the latest version of chdman.
 
