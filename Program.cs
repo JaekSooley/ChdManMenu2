@@ -349,14 +349,6 @@ void ExtractDvdToIso()
                 double oldSize = GetFileSizeMb(inputFile);
                 double newSize = GetFileSizeMb(outputFile);
 
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
-                    {
-                        oldSize += GetFileSizeMb(binFile);
-                    }
-                }
-
                 UI.Write();
                 UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
             }
@@ -410,9 +402,9 @@ void ExtractCdChdToCueBin()
                 double oldSize = GetFileSizeMb(inputFile);
                 double newSize = GetFileSizeMb(outputFile);
 
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
+                if (Path.GetExtension(outputFile).ToLower() == ".cue")
                 {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
+                    foreach (string binFile in GetBinFilesFromCue(outputFile))
                     {
                         oldSize += GetFileSizeMb(binFile);
                     }
@@ -470,14 +462,6 @@ void ExtractCdChdToGdi()
             {
                 double oldSize = GetFileSizeMb(inputFile);
                 double newSize = GetFileSizeMb(outputFile);
-
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
-                    {
-                        oldSize += GetFileSizeMb(binFile);
-                    }
-                }
 
                 UI.Write();
                 UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
