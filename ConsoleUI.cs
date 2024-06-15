@@ -8,16 +8,19 @@
 
             int headerWidth = 48;
             int textWidth = header.Length + 2;
-            int padding = (headerWidth - textWidth) / 2;
+            int paddingWidth = (headerWidth - textWidth) / 2;
+														string paddingString = "";
+														for (int i = 0; i < paddingWidth; i++) paddingString += "=";
+
             string displayText = string.Empty;
 
             Console.WriteLine("");
 
-            for (int i = 0; i < padding; i++) displayText += "=";
+            displayText += paddingString;
 
             displayText += $" {header.ToUpper()} ";
 
-            for (int i = 0; i < padding; i++) displayText += "=";
+            displayText += paddingString;
 
             Console.WriteLine(displayText);
             Console.WriteLine("");
