@@ -2,7 +2,7 @@
 {
     public class UI
     {
-        public static void Header(string header, bool clearPreviousScreen = true)
+        public static void Header(string header, bool clearPreviousScreen = true, string paddingCharacter = "=")
         {
             if (clearPreviousScreen) Console.Clear();
 
@@ -11,10 +11,10 @@
             int paddingWidth = (headerWidth - textWidth) / 2;
 
             string paddingString = "";
-            for (int i = 0; i < paddingWidth; i++) paddingString += "=";
+            for (int i = 0; i < paddingWidth; i++) paddingString += paddingCharacter;
 
             string displayText = paddingString;
-            displayText += $" {header.ToUpper()} ";
+            displayText += $" {header} ";
             displayText += paddingString;
 
             Console.WriteLine("");
@@ -51,7 +51,7 @@
 
         public static void Error(string description)
         {
-            Header("///// Error /////");
+            Header("Error", true, "/");
             Console.WriteLine(description);
             Pause();
         }

@@ -88,23 +88,26 @@ void ProcessMenu(string? dir = null)
         if (input != null)
         {
             UI.Header("Delete Files?");
-            UI.Write("\nDelete source file(s) after compression/extraction?");
+            UI.Write("\nDelete source file(s) after compression/extraction?\n");
             UI.Option("[1] No");
             UI.Option("[2] Yes");
 
             int? inputDel = Input.GetInteger(1);
 
-            switch (inputDel)
+            if (input != 0)
             {
-                case 1:
-                    deleteFiles = false;
-                    break;
-                case 2:
-                    deleteFiles = true;
-                    break;
-                default:
-                    deleteFiles = false;
-                    break;
+                switch (inputDel)
+                {
+                    case 1:
+                        deleteFiles = false;
+                        break;
+                    case 2:
+                        deleteFiles = true;
+                        break;
+                    default:
+                        deleteFiles = false;
+                        break;
+                }
             }
 
             switch (input)
