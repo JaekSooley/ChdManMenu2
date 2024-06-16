@@ -344,7 +344,6 @@ namespace ConsoleUI
             if (input != null && StandardCommands(input.ToString()))
             {
                 input = null;
-                output = null;
             }
 
             if (input != null)
@@ -405,7 +404,7 @@ namespace ConsoleUI
         /// Enter a command with a leading exclamation mark: "!command here"
         /// </summary>
         /// <param name="input"></param>
-        static bool StandardCommands(string input)
+        static bool StandardCommands(string? input)
         {
             switch (input)
             {
@@ -428,6 +427,7 @@ namespace ConsoleUI
                     return false;
             }
         }
+
         static void StandardCommandAccepted(string command)
         {
             Console.WriteLine($"ConsoleUI command \"{command}\" detected.");
