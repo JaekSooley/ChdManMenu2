@@ -1,6 +1,7 @@
 ﻿using ConsoleUI;
 using System.IO.Compression;
 
+Console.Title = "ChdMan Menu";
 
 string? rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
 string? chdmanPath = null;
@@ -28,7 +29,7 @@ UI.Pause();
 // HERE LIE METHODS
 void MainMenu()
 {
-    UI.Header("Main Menu");
+    UI.Header("Load Directory");
     UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
     UI.Write();
     UI.Write("Enter directory containing files to process.");
@@ -73,7 +74,7 @@ void ProcessMenu(string? dir = null)
 
         PrintFiles();
 
-        UI.Header("Choose Option", false);
+        UI.Header("Main Menu", false);
         UI.Option("[1] Create CD CHD file(s) - PSX, Dreamcast, NeoGeo CD, (some) PS2");
         UI.Option("[2] Create DVD CHD file(s) - PS2 (default hunk size)");
         UI.Option("[3] Create DVD CHD file(s) - PPSSPP (2048 hunk size)");

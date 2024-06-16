@@ -2,6 +2,12 @@
 {
     public class UI
     {
+        /// <summary>
+        /// Menu/screen header with centred text.
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="clearPreviousScreen"></param>
+        /// <param name="paddingCharacter"></param>
         public static void Header(string header, bool clearPreviousScreen = true, string paddingCharacter = "=")
         {
             if (clearPreviousScreen) Console.Clear();
@@ -22,11 +28,17 @@
             Console.WriteLine("");
         }
 
+        /// <summary>
+        /// Menu options that use keywords (e.g. Input OPEN to select the [OPEN] option)
+        /// </summary>
+        /// <param name="option"></param>
+        /// <param name="description"></param>
+        /// <param name="current"></param>
         public static void Option(string option, string description = "", string current = "")
         {
             int descriptionOffset = 24;
 
-            string text = $"\t{option}";
+            string text = $"  {option}";
             string whitespace = "";
 
             if (text.Length <= descriptionOffset)
@@ -42,6 +54,35 @@
             Console.WriteLine(text);
         }
 
+        /// <summary>
+        /// Menu options that use index numbers (e.g. Input [1] to select first option)
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="description"></param>
+        /// <param name="current"></param>
+        public static void IndexOption(int index, string description = "", string current = "")
+        {
+            int descriptionOffset = 5;
+
+            string text = $"  [{index}]";
+            string whitespace = "";
+
+            if (text.Length <= descriptionOffset)
+            {
+                for (int i = 0; i <= descriptionOffset - text.Length; i++)
+                {
+                    whitespace += " ";
+                }
+            }
+
+            if (current != "") text += $" ({current})";
+            if (description != "") text += $"{whitespace} {description}";
+            Console.WriteLine(text);
+        }
+
+        /// <summary>
+        /// Pause console and await keypress.
+        /// </summary>
         public static void Pause()
         {
             Console.WriteLine("");
@@ -49,17 +90,59 @@
             Console.ReadKey();
         }
 
-        public static void Error(string description)
+        /// <summary>
+        /// Error screen with option to display an error message.
+        /// The error message is written to log.txt by default.
+        /// Clears previous console lines.
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="writeToLog"></param>
+        public static void Error(string description, bool writeToLog = true)
         {
             Header("Error", true, "/");
             Console.WriteLine(description);
+
+            if (writeToLog)
+            {
+                string fname = "log.txt";
+                string path = AppDomain.CurrentDomain.BaseDirectory + fname;
+                string time = DateTime.Now.ToString();
+                string text = $"{time} | ERROR: {description}";
+
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+
             Pause();
         }
 
-        public static void Warning(string description)
+        /// <summary>
+        /// Friendly little warning screen. Does not clear console.
+        /// Includes option to write warning to log.txt (disabled by default).
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="writeToLog"></param>
+        public static void Warning(string description, bool writeToLog = false)
         {
-            Header("Warning", false);
+            Header("Warning", false, "/");
             Console.WriteLine(description);
+
+            if (writeToLog)
+            {
+                string fname = "log.txt";
+                string path = AppDomain.CurrentDomain.BaseDirectory + fname;
+                string time = DateTime.Now.ToString();
+                string text = $"{time} | WARNING: {description}";
+
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+
+            Pause();
         }
 
         // Yes, this is just because I can't be bothered typing Console.WriteLine() all the time.
@@ -74,8 +157,9 @@
         public static void Input(string type, string? defaultValue = null)
         {
             Console.WriteLine("");
-            if (defaultValue == null) Console.Write($"Input ({type}): "); 
-            else Console.Write($"Input ({type}): [{defaultValue}] ");
+            Console.WriteLine($"Input ({type}):");
+            Console.Write($"-> ");
+            if (defaultValue != null) Console.Write($"[{defaultValue}] ");
         }
     }
 
@@ -89,12 +173,13 @@
             if (defaultValue != null) UI.Input(type, defaultValue.ToString());
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (bool.TryParse(input, out bool val)) output = val;
 
             return output;
         }
+
         public static int? GetInteger(int? defaultValue = null)
         {
             string type = "int";
@@ -103,7 +188,7 @@
             if (defaultValue != null) UI.Input(type, defaultValue.ToString());
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (int.TryParse(input, out int val)) output = val;
 
@@ -118,7 +203,7 @@
             if (defaultValue != null) UI.Input(type, defaultValue.ToString());
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (float.TryParse(input, out float val)) output = val;
 
@@ -133,7 +218,7 @@
             if (defaultValue != null) UI.Input(type, defaultValue.ToString());
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (double.TryParse(input, out double val)) output = val;
 
@@ -149,7 +234,7 @@
             if (defaultValue != null) UI.Input(type, defaultValue.ToString());
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (decimal.TryParse(input, out decimal val)) output = val;
 
@@ -164,24 +249,72 @@
             if (defaultValue != null) UI.Input(type, defaultValue);
             else UI.Input(type);
 
-            string input = ReadLine();
+            string? input = Console.ReadLine();
 
             if (input != "") output = input;
 
             return output;
         }
 
+        /// <summary>
+        /// Returns a single file if a valid path is entered. Otherwise, returns null.
+        /// </summary>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public static string? GetFile(string? defaultValue = null)
         {
             string type = "file path";
             string? output = defaultValue;
 
+            if (!File.Exists(output)) output = null;
+
             if (defaultValue != null) UI.Input(type, defaultValue);
             else UI.Input(type);
 
-            string input = ReadLine().Replace("\"", "");
+            string? input = Console.ReadLine();
+
+            if (input != null) input = input.Replace("\"", "");
 
             if (File.Exists(input)) output = input;
+
+            return output;
+        }
+
+        /// <summary>
+        /// Splits an input string by " and returns a list of valid file names found.
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> GetFiles()
+        {
+            string type = "file path";
+            List<string> output = new();
+
+            UI.Input(type);
+
+            string? input = Console.ReadLine();
+
+            if (input != null)
+            {
+                string[] fileList;
+
+                // Filenames with spaces are wrapped in '"' what drag n' dropped into the console
+                if (input.Contains('"'))
+                {
+                    fileList = input.Split('"');
+                }
+                else
+                {
+                    fileList = input.Split(" ");
+                }
+
+                foreach (string file in fileList)
+                {
+                    if (File.Exists(file))
+                    {
+                        output.Add(file);
+                    }
+                }
+            }
 
             return output;
         }
@@ -193,25 +326,13 @@
 
             UI.Input(type, defaultValue);
 
-            string input = ReadLine().Replace("\"", "");
+            string? input = Console.ReadLine();
+
+            if (input != null) input = input.Replace("\"", "");
 
             if (Directory.Exists(input)) output = input;
 
             return output;
-        }
-
-        static string ReadLine()
-        {
-            string? input = Console.ReadLine();
-            if (input == null) input = "";
-
-            return input;
-        }
-
-        static void InputInvalid(string type, string input, string valueSetTo)
-        {
-            if (input == "") Console.WriteLine($"Default value \"{valueSetTo}\" used.");
-            else Console.WriteLine($"Invalid input! Default value \"{valueSetTo}\" used.");
         }
     }
 }
