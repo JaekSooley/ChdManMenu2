@@ -1,5 +1,11 @@
-﻿namespace ConsoleUI
+﻿using System.Diagnostics;
+using System.Xml.Linq;
+
+namespace ConsoleUI
 {
+    /// <summary>
+    /// Methods used for standardising the display of """UI""" elements
+    /// </summary>
     public class UI
     {
         /// <summary>
@@ -12,7 +18,7 @@
         {
             if (clearPreviousScreen) Console.Clear();
 
-            int headerWidth = 48;
+            int headerWidth = 56;
             int textWidth = header.Length + 2;
             int paddingWidth = (headerWidth - textWidth) / 2;
 
@@ -38,7 +44,7 @@
         {
             int descriptionOffset = 24;
 
-            string text = $"  {option}";
+            string text = $"\t{option}";
             string whitespace = "";
 
             if (text.Length <= descriptionOffset)
@@ -145,8 +151,10 @@
             Pause();
         }
 
-        // Yes, this is just because I can't be bothered typing Console.WriteLine() all the time.
-        // No, I will not be taking questions.
+        /// <summary>
+        /// Literally just Console.WriteLine() lmao
+        /// </summary>
+        /// <param name="text"></param>
         public static void Write(string text = "")
         {
             Console.WriteLine(text);
@@ -163,6 +171,10 @@
         }
     }
 
+
+    /// <summary>
+    /// Methods used for getting inputs from the user.
+    /// </summary>
     public class Input
     {
         public static bool? GetBoolean(bool? defaultValue = null)
@@ -175,6 +187,12 @@
 
             string? input = Console.ReadLine();
 
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
+            
             if (bool.TryParse(input, out bool val)) output = val;
 
             return output;
@@ -205,6 +223,12 @@
 
             string? input = Console.ReadLine();
 
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
+
             if (float.TryParse(input, out float val)) output = val;
 
             return output;
@@ -219,6 +243,12 @@
             else UI.Input(type);
 
             string? input = Console.ReadLine();
+
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
 
             if (double.TryParse(input, out double val)) output = val;
 
@@ -236,6 +266,12 @@
 
             string? input = Console.ReadLine();
 
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
+
             if (decimal.TryParse(input, out decimal val)) output = val;
 
             return output;
@@ -250,6 +286,12 @@
             else UI.Input(type);
 
             string? input = Console.ReadLine();
+
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
 
             if (input != "") output = input;
 
@@ -273,6 +315,12 @@
 
             string? input = Console.ReadLine();
 
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
+
             if (input != null) input = input.Replace("\"", "");
 
             if (File.Exists(input)) output = input;
@@ -292,6 +340,12 @@
             UI.Input(type);
 
             string? input = Console.ReadLine();
+
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
 
             if (input != null)
             {
@@ -319,6 +373,11 @@
             return output;
         }
 
+        /// <summary>
+        /// Returns single directory if the user enters a valid path, returns null if the directory does not exist.
+        /// </summary>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public static string? GetDirectory(string? defaultValue = null)
         {
             string type = "directory";
@@ -328,11 +387,51 @@
 
             string? input = Console.ReadLine();
 
+            if (input != null && StandardCommands(input.ToString()))
+            {
+                input = null;
+                output = null;
+            }
+
             if (input != null) input = input.Replace("\"", "");
 
             if (Directory.Exists(input)) output = input;
 
             return output;
+        }
+
+        /// <summary>
+        /// Enables ConsoleUI to perform its own commands instead of the calling application.
+        /// Enter a command with a leading exclamation mark: "!command here"
+        /// </summary>
+        /// <param name="input"></param>
+        static bool StandardCommands(string input)
+        {
+            switch (input)
+            {
+                case "!log":
+                    string fname = "log.txt";
+                    string path = AppDomain.CurrentDomain.BaseDirectory + fname;
+
+                    if (File.Exists(path))
+                    {
+                        Process.Start("notepad.exe", path);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ConsoleUI: log.txt does not exist!");
+                    }
+
+                    StandardCommandAccepted(input);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        static void StandardCommandAccepted(string command)
+        {
+            Console.WriteLine($"ConsoleUI command \"{command}\" detected.");
+            UI.Pause();
         }
     }
 }
