@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace ConsoleUI
 {
@@ -335,7 +334,7 @@ namespace ConsoleUI
         public static List<string> GetFiles()
         {
             string type = "file path";
-            List<string> output = new();
+            List<string> output = [];
 
             UI.Input(type);
 
@@ -406,32 +405,48 @@ namespace ConsoleUI
         /// <param name="input"></param>
         static bool StandardCommands(string? input)
         {
+            bool result = false;
+
+            string logPath = AppDomain.CurrentDomain.BaseDirectory + "log.txt";
+
             switch (input)
             {
                 case "!log":
-                    string fname = "log.txt";
-                    string path = AppDomain.CurrentDomain.BaseDirectory + fname;
 
-                    if (File.Exists(path))
+                    StandardCommandWriteLine("Attempting to open log file...");
+                    if (File.Exists(logPath)) Process.Start("notepad.exe", logPath);
+                    else StandardCommandWriteLine("\"log.txt\" does not exist!");
+
+                    result = true;
+                    break;
+                case "!logdel":
+
+                    if (File.Exists(logPath))
                     {
-                        Process.Start("notepad.exe", path);
-                    }
-                    else
-                    {
-                        Console.WriteLine("ConsoleUI: log.txt does not exist!");
+                        File.Delete(logPath);
+                        StandardCommandWriteLine("Deleted \"log.txt\"");
                     }
 
-                    StandardCommandAccepted(input);
-                    return true;
+                    result = true;
+                    break;
                 default:
-                    return false;
+                    break;
             }
+
+            UI.Pause();
+
+            return result;
         }
 
         static void StandardCommandAccepted(string command)
         {
-            Console.WriteLine($"ConsoleUI command \"{command}\" detected.");
+            StandardCommandWriteLine($"\"{command}\" recognised.");
             UI.Pause();
+        }
+
+        static void StandardCommandWriteLine(string text)
+        {
+            Console.WriteLine($"ConsoleUI: {text}");
         }
     }
 }
