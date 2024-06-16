@@ -639,7 +639,7 @@ void GetFiles(string? dir = null)
 
 double GetFileSizeMb(string file)
 {
-    return new System.IO.FileInfo(file).Length / 1000000;
+    return new FileInfo(file).Length / 1000000;
 }
 
 
