@@ -233,7 +233,7 @@ void CueGdiIsoToChd()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);
@@ -301,7 +301,7 @@ void CueGdiIsoToChdDvd()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);
@@ -369,7 +369,7 @@ void CueGdiIsoToChdPsp()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);
@@ -422,7 +422,7 @@ void ExtractDvdToIso()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);
@@ -483,7 +483,7 @@ void ExtractCdChdToCueBin()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);
@@ -536,7 +536,7 @@ void ExtractCdChdToGdi()
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n");
+        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
     UI.Header("Done!", false);

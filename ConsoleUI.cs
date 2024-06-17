@@ -15,7 +15,7 @@ namespace ConsoleUI
         /// <param name="header"></param>
         /// <param name="clearPreviousScreen"></param>
         /// <param name="paddingCharacter"></param>
-        public static void Header(string header, bool clearPreviousScreen = true, string paddingCharacter = "=")
+        public static void Header(string header, bool clearPreviousScreen = true, ConsoleColor color = ConsoleColor.White, string paddingCharacter = "=")
         {
             if (clearPreviousScreen) Console.Clear();
 
@@ -30,6 +30,7 @@ namespace ConsoleUI
             displayText += $" {header} ";
             displayText += paddingString;
 
+            Console.ForegroundColor = color;
             Console.WriteLine("");
             Console.WriteLine(displayText);
             Console.WriteLine("");
@@ -106,7 +107,7 @@ namespace ConsoleUI
         /// <param name="writeToLog"></param>
         public static void Error(string description, bool writeToLog = true)
         {
-            Header("Error", true, "/");
+            Header("Error", true, ConsoleColor.Red, "/");
             Console.WriteLine(description);
 
             if (writeToLog)
@@ -133,7 +134,7 @@ namespace ConsoleUI
         /// <param name="writeToLog"></param>
         public static void Warning(string description, bool writeToLog = false)
         {
-            Header("Warning", false, "/");
+            Header("Warning", false, ConsoleColor.DarkYellow, "/");
             Console.WriteLine(description);
 
             if (writeToLog)
@@ -156,9 +157,22 @@ namespace ConsoleUI
         /// Literally just Console.WriteLine() lmao
         /// </summary>
         /// <param name="text"></param>
-        public static void Write(string text = "")
+        public static void Write(string text = "", ConsoleColor? color = null)
         {
-            Console.WriteLine(text);
+            if (color != null)
+            {
+                ConsoleColor previousColor = Console.ForegroundColor;
+
+                Console.ForegroundColor = (ConsoleColor)color;
+
+                Console.WriteLine(text);
+
+                Console.ForegroundColor = previousColor;
+            }
+            else
+            {
+                Console.WriteLine(text);
+            }
         }
 
 
