@@ -226,7 +226,7 @@ void CueGdiIsoToChd()
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
@@ -294,7 +294,7 @@ void CueGdiIsoToChdDvd()
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
@@ -304,7 +304,7 @@ void CueGdiIsoToChdDvd()
         UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
     }
 
-    UI.Header("Done!", false);
+    UI.Header("Done!", false, ConsoleColor.Green);
 
     if (failList.Count > 0)
     {
@@ -362,7 +362,7 @@ void CueGdiIsoToChdPsp()
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
@@ -415,7 +415,7 @@ void ExtractDvdToIso()
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
@@ -476,7 +476,7 @@ void ExtractCdChdToCueBin()
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
