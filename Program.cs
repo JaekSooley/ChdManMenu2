@@ -208,48 +208,17 @@ void CueGdiIsoToChd()
 
         if (RunChdman($"createcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
-                    {
-                        oldSize += GetFileSizeMb(binFile);
-                    }
-                }
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
-    UI.Header("Done!", false);
-
-    if (failList.Count > 0)
-    {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
-        foreach (string file in failList)
-        {
-            UI.Write($"{file}");
-        }
-        UI.Write();
-    }
-
-    UI.Pause();
+    FinishedScreen(failList);
 }
 
 
@@ -276,48 +245,17 @@ void CueGdiIsoToChdDvd()
 
         if (RunChdman($"createdvd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
-                    {
-                        oldSize += GetFileSizeMb(binFile);
-                    }
-                }
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
-    UI.Header("Done!", false, ConsoleColor.Green);
-
-    if (failList.Count > 0)
-    {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
-        foreach (string file in failList)
-        {
-            UI.Write($"{file}");
-        }
-        UI.Write();
-    }
-
-    UI.Pause();
+    FinishedScreen(failList);
 }
 
 
@@ -344,48 +282,17 @@ void CueGdiIsoToChdPsp()
 
         if (RunChdman($"createdvd -hs 2048 -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                if (Path.GetExtension(inputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(inputFile))
-                    {
-                        oldSize += GetFileSizeMb(binFile);
-                    }
-                }
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
-    UI.Header("Done!", false);
-
-    if (failList.Count > 0)
-    {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
-        foreach (string file in failList)
-        {
-            UI.Write($"{file}");
-        }
-        UI.Write();
-    }
-
-    UI.Pause();
+    FinishedScreen(failList);
 }
 
 
@@ -405,40 +312,17 @@ void ExtractDvdToIso()
 
         if (RunChdman($"extractdvd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
-    UI.Header("Done!", false);
-
-    if (failList.Count > 0)
-    {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
-        foreach (string file in failList)
-        {
-            UI.Write($"{file}");
-        }
-        UI.Write();
-    }
-
-    UI.Pause();
+    FinishedScreen(failList);
 }
 
 
@@ -458,48 +342,17 @@ void ExtractCdChdToCueBin()
 
         if (RunChdman($"extractcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                if (Path.GetExtension(outputFile).ToLower() == ".cue")
-                {
-                    foreach (string binFile in GetBinFilesFromCue(outputFile))
-                    {
-                        newSize += GetFileSizeMb(binFile);
-                    }
-                }
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
-    UI.Header("Done!", false);
-
-    if (failList.Count > 0)
-    {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
-        foreach (string file in failList)
-        {
-            UI.Write($"{file}");
-        }
-        UI.Write();
-    }
-
-    UI.Pause();
+    FinishedScreen(failList);
 }
 
 
@@ -519,42 +372,73 @@ void ExtractCdChdToGdi()
 
         if (RunChdman($"extractcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
-            if (File.Exists(outputFile))
-            {
-                double oldSize = GetFileSizeMb(inputFile);
-                double newSize = GetFileSizeMb(outputFile);
-
-                UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
-            }
-
-            if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+            OnCompressionSuccess(inputFile, outputFile);
         }
         else
         {
             failList.Add(inputFile);
         }
 
-        UI.Write($"\nProgress: {i + 1} of {files.Count} done\n", ConsoleColor.Cyan);
+        ShowProgress(i + 1 - failList.Count, files.Count);
     }
 
+    FinishedScreen(failList);
+}
+
+void OnCompressionSuccess(string inputFile, string outputFile)
+{
+    // Show file size difference
+    if (File.Exists(outputFile))
+    {
+        double inputSize = GetFileSizeMb(inputFile);
+        double outputSize = GetFileSizeMb(outputFile);
+
+        if (Path.GetExtension(inputFile).ToLower() == ".cue")
+        {
+            foreach (string binFile in GetBinFilesFromCue(inputFile))
+            {
+                inputSize += GetFileSizeMb(binFile);
+            }
+        }
+
+        if (Path.GetExtension(outputFile).ToLower() == ".cue")
+        {
+            foreach (string binFile in GetBinFilesFromCue(outputFile))
+            {
+                outputSize += GetFileSizeMb(binFile);
+            }
+        }
+
+        UI.Write();
+        UI.Write($"Size difference: {inputSize} MB -> {outputSize} MB", ConsoleColor.DarkCyan);
+    }
+
+    // Delete input file
+    if (deleteFiles) DeleteFile(inputFile);
+    else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
+}
+
+void ShowProgress(int current, int total)
+{
+    UI.Write($"\nProgress: {current} of {total} done\n", ConsoleColor.Cyan);
+}
+
+void FinishedScreen(List<string> failList)
+{
     UI.Header("Done!", false);
 
     if (failList.Count > 0)
     {
-        UI.Write($"{failList.Count} file(s) failed to process:");
-        UI.Write();
+        UI.Write($"{failList.Count} file(s) failed to process:", ConsoleColor.DarkRed);
         foreach (string file in failList)
         {
-            UI.Write($"{file}");
+            UI.Write($"\t{file}", ConsoleColor.DarkRed);
         }
         UI.Write();
     }
 
     UI.Pause();
 }
-
 
 void DeleteFile(string file)
 {
