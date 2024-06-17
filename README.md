@@ -17,8 +17,16 @@ This is a re-write of [chdman-menu](https://github.com/JaekSooley/chdman-menu) i
 - If chdman.exe is not present in the same directory as ChdManMenu2.exe, you will be asked to input a valid path to chdman.exe.
 - Drag and drop a folder containing the files you wish to compress/extract into the window when prompted and press ENTER.
 
-![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/568cd78b-e272-4ec7-98ea-60d445baee2c)
+## Screenshots
 
- 
+![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/d8e777ae-1442-4ac6-b421-7315ada7418c)
+![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/66c2143c-de0a-437b-847a-305c3b5c146a)
+![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/54b413a1-ef7f-43ff-afbb-a458f63c4aa7)
+![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/38981676-4b8c-4123-b4a5-5ed0319655d9)
+![image](https://github.com/JaekSooley/ChdManMenu2/assets/117260365/ca194f52-0d0e-4119-a425-0b7a57506f7a)
+
+
+
+
 Get chdman here: https://www.mamedev.org/release.html
 _chdman comes bundled with MAME._
