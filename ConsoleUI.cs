@@ -334,8 +334,9 @@ namespace ConsoleUI
         /// Can be filtered by an extension.
         /// </summary>
         /// <param name="ext"></param>
+        /// <param name="searchOption"></param>
         /// <returns></returns>
-        public static List<string> GetFiles(string? ext = null)
+        public static List<string> GetFiles(string? ext = null, SearchOption searchOption = SearchOption.AllDirectories)
         {
             string type = "directory/file path(s)";
             List<string> validFiles = [];
@@ -397,7 +398,7 @@ namespace ConsoleUI
                     }
                     if (Directory.Exists(item))
                     {
-                        string[] files = Directory.GetFiles(item);
+                        string[] files = Directory.GetFiles(item, "*.*", searchOption);
 
                         foreach (string file in files)
                         {
