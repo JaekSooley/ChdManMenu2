@@ -12,9 +12,10 @@ List<string> cueFiles = new();
 List<string> binFiles = new();
 List<string> gdiFiles = new();
 
-bool moveUpFolder = false;
-bool deleteFiles = false;
 bool usingApplicationDirectory = false;
+
+bool deleteFiles = false;
+bool moveToParent = false;
 
 
 // MAIN
@@ -29,47 +30,44 @@ UI.Pause();
 // HERE LIE METHODS
 void MainMenu()
 {
-    UI.Header("Load Directory");
-    UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
-    UI.Write();
-    UI.Write("Enter directory containing files to process.");
-    UI.Write();
-    UI.Write("Leave blank to use this application's directory.");
-    UI.Write();
-
-    string? workingDirectory = Input.GetDirectory();
-
-    if (workingDirectory != null)
+    while (true)
     {
-        if (Path.Exists(workingDirectory))
-        {
-            GetFiles(workingDirectory);
-            ProcessMenu(workingDirectory);
-        }
-        else
-        {
-            UI.Error("Invalid directory!");
-        }
-    }
-    else
-    {
-        usingApplicationDirectory = true;
-        workingDirectory = rootDirectory;
+        deleteFiles = false;
+        moveToParent = false;
 
-        GetFiles(workingDirectory);
-        ProcessMenu(workingDirectory);
+        UI.Header("Load Files");
+        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
+        UI.Write();
+        UI.Write("Enter files or directories containing files to process.");
+        UI.Write();
+        UI.Write("Leave blank to use this application's directory.");
+        UI.Write();
+
+        List<string> fileList = Input.GetFiles();
+
+        if (fileList.Count == 0)
+        {
+            usingApplicationDirectory = true;
+            fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories).ToList();
+        }
+
+        PopulateFileLists(fileList);
+        ProcessMenu();
     }
 }
 
 
-void ProcessMenu(string? dir = null)
+void ProcessMenu()
 {
-    if (dir != null)
+    int? processingOption;
+
+    // Select processing option
+    while (true)
     {
         UI.Header("Valid Files");
         if (usingApplicationDirectory)
         {
-            UI.Write("Using current application directory.");
+            UI.Write($"Using current application directory ({rootDirectory})");
         }
 
         PrintFiles();
@@ -88,76 +86,100 @@ void ProcessMenu(string? dir = null)
 
         int? input = Input.GetInteger();
 
-        if (input != null)
+        if (input >= 0 && input <= 6)
         {
-            UI.Header("Delete Files?");
-            UI.Write("\nDelete source file(s) after compression/extraction?\n");
-            UI.Option("[1] No");
-            UI.Option("[2] Yes");
-
-            int? inputDel = Input.GetInteger(1);
-
-            if (input != 0)
-            {
-                switch (inputDel)
-                {
-                    case 1:
-                        deleteFiles = false;
-                        break;
-                    case 2:
-                        deleteFiles = true;
-                        break;
-                    default:
-                        deleteFiles = false;
-                        break;
-                }
-            }
-
-            UI.Header("Move to Parent Directory?");
-            UI.Write("Move output CHD files into source files' parent directory?");
-            UI.Write();
-            UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.");
-            UI.Write();
-            UI.Option("[1] No");
-            UI.Option("[2] Yes");
-
-            moveUpFolder = false;
-            int? inputMoveUp = Input.GetInteger(1);
-            if (inputMoveUp == 2) moveUpFolder = true;
-
-            switch (input)
-            {
-                case 1:
-                    CueGdiIsoToChd();
-                    break;
-                case 2:
-                    CueGdiIsoToChdDvd();
-                    break;
-                case 3:
-                    CueGdiIsoToChdPsp();
-                    break;
-                case 4:
-                    ExtractDvdToIso();
-                    break;
-                case 5:
-                    ExtractCdChdToCueBin();
-                    break;
-                case 6:
-                    ExtractCdChdToGdi();
-                    break;
-                default:
-                    break;
-            }
+            processingOption = input;
+            break;
         }
-        else
+    }
+
+    // Select delete files
+    while (true)
+    {
+        bool escape = false;
+
+        UI.Header("Delete Files?");
+        UI.Write("\nDelete source file(s) after compression/extraction?\n");
+        UI.Option("[1] No");
+        UI.Option("[2] Yes");
+
+        int? inputDel = Input.GetInteger();
+
+        switch (inputDel)
         {
-            UI.Header("Oops");
-            UI.Write("Bye!");
+            case 1:
+                deleteFiles = false;
+                escape = true;
+                break;
+            case 2:
+                deleteFiles = true;
+                escape = true;
+                break;
+            default:
+                escape = false;
+                break;
+        }
+
+        if (escape) break;
+    }
+
+    // Select move up folder
+    while (true)
+    {
+        moveToParent = false;
+
+        UI.Header("Move to Parent Directory?");
+        UI.Write("Move output CHD files into source files' parent directory?");
+        UI.Write();
+        UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.");
+        UI.Write();
+        UI.Option("[1] No");
+        UI.Option("[2] Yes");
+
+        int? inputMoveUp = Input.GetInteger();
+        if (inputMoveUp == 1)
+        {
+            moveToParent = false;
+            break;
+        }
+        if (inputMoveUp == 2)
+        {
+            moveToParent = true;
+            break;
+        }
+    }
+
+    // Start Processing
+    if (processingOption != null)
+    {
+        switch (processingOption)
+        {
+            case 1:
+                CueGdiIsoToChd();
+                break;
+            case 2:
+                CueGdiIsoToChdDvd();
+                break;
+            case 3:
+                CueGdiIsoToChdPsp();
+                break;
+            case 4:
+                ExtractDvdToIso();
+                break;
+            case 5:
+                ExtractCdChdToCueBin();
+                break;
+            case 6:
+                ExtractCdChdToGdi();
+                break;
+            default:
+                UI.Error($"Processing option \"{processingOption}\" not recognised!");
+                break;
         }
     }
     else
     {
-        UI.Write("You should never have seen this.");
+        UI.Error("No processing option selected!");
     }
 }
 
@@ -177,7 +199,7 @@ void CueGdiIsoToChd()
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (moveUpFolder)
+        if (moveToParent)
         {
             string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
 
@@ -245,7 +267,7 @@ void CueGdiIsoToChdDvd()
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (moveUpFolder)
+        if (moveToParent)
         {
             string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
 
@@ -313,7 +335,7 @@ void CueGdiIsoToChdPsp()
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".chd");
 
-        if (moveUpFolder)
+        if (moveToParent)
         {
             string parentDir = Path.GetFullPath(Path.Combine(inputFile, @"..\..\"));
 
@@ -550,7 +572,7 @@ void DeleteFile(string file)
         UI.Write($"Deleted \"{file}\"");
 
         string? dir = Path.GetDirectoryName(file);
-        if (dir != null && moveUpFolder)
+        if (dir != null && moveToParent)
         {
             Directory.Delete(dir);
             UI.Write($"Deleted directory \"{dir}\"");
@@ -609,13 +631,19 @@ bool RunChdman(string arg = "")
 }
 
 
-void GetFiles(string? dir = null)
+void PopulateFileLists(List<string> files)
 {
-    if (Path.Exists(dir))
-    {
-        List<string> fileList = Directory.GetFiles(dir, "*.*", System.IO.SearchOption.AllDirectories).ToList();
+    // Reset lists
+    chdFiles.Clear();
+    isoFiles.Clear();
+    cueFiles.Clear();
+    binFiles.Clear();
+    gdiFiles.Clear();
 
-        foreach (string file in fileList)
+    // Add valid files to lists
+    foreach (string file in files)
+    {
+        if (File.Exists (file))
         {
             string ext = Path.GetExtension(file);
 
@@ -625,14 +653,10 @@ void GetFiles(string? dir = null)
             if (ext.ToLower() == ".bin") binFiles.Add(file);
             if (ext.ToLower() == ".gdi") gdiFiles.Add(file);
         }
-    }
-    else
-    {
-        chdFiles.Clear();
-        isoFiles.Clear();
-        cueFiles.Clear();
-        binFiles.Clear();
-        gdiFiles.Clear();
+        else
+        {
+            UI.Warning($"\"{file}\" does not exist!");
+        }
     }
 }
 
