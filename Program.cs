@@ -81,12 +81,10 @@ void ProcessMenu()
         UI.Option("[5] Extract CD CHD to CUE/BIN");
         UI.Option("[6] Extract CD CHD to GDI");
         UI.Write();
-        UI.Option("[0] Cancel");
-        UI.Write();
 
         int? input = Input.GetInteger();
 
-        if (input >= 0 && input <= 6)
+        if (input >= 1 && input <= 6)
         {
             processingOption = input;
             break;
@@ -128,10 +126,10 @@ void ProcessMenu()
     {
         moveToParent = false;
 
-        UI.Header("Move to Parent Directory?");
-        UI.Write("Move output CHD files into source files' parent directory?");
+        UI.Header("Output Location");
+        UI.Write("Move output CHD files into the parent directory of their source file(s)?");
         UI.Write();
-        UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.");
+        UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.", ConsoleColor.Gray);
         UI.Write();
         UI.Option("[1] No");
         UI.Option("[2] Yes");
@@ -553,14 +551,13 @@ double GetFileSizeMb(string file)
 
 void PrintFiles()
 {
+    UI.Write("Loaded files:");
     UI.Write();
-    UI.Write("Directory contents:");
-    UI.Write();
-    UI.Write($"Found {cueFiles.Count()} .CUE files");
-    UI.Write($"Found {binFiles.Count()} .BIN files");
-    UI.Write($"Found {isoFiles.Count()} .ISO files");
-    UI.Write($"Found {gdiFiles.Count()} .GDI files");
-    UI.Write($"Found {chdFiles.Count()} .CHD files");
+    UI.Write($"\tFound {cueFiles.Count()} .CUE files");
+    UI.Write($"\tFound {binFiles.Count()} .BIN files");
+    UI.Write($"\tFound {isoFiles.Count()} .ISO files");
+    UI.Write($"\tFound {gdiFiles.Count()} .GDI files");
+    UI.Write($"\tFound {chdFiles.Count()} .CHD files");
     UI.Write();
 }
 
