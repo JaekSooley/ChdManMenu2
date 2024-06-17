@@ -36,7 +36,7 @@ void MainMenu()
         moveToParent = false;
 
         UI.Header("Load Files");
-        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"");
+        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"", ConsoleColor.Green);
         UI.Write();
         UI.Write("Enter files or directories containing files to process.");
         UI.Write();
@@ -222,7 +222,7 @@ void CueGdiIsoToChd()
                 }
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
@@ -290,7 +290,7 @@ void CueGdiIsoToChdDvd()
                 }
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
@@ -358,7 +358,7 @@ void CueGdiIsoToChdPsp()
                 }
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
@@ -411,7 +411,7 @@ void ExtractDvdToIso()
                 double newSize = GetFileSizeMb(outputFile);
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
@@ -472,7 +472,7 @@ void ExtractCdChdToCueBin()
                 }
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
@@ -525,11 +525,11 @@ void ExtractCdChdToGdi()
                 double newSize = GetFileSizeMb(outputFile);
 
                 UI.Write();
-                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB");
+                UI.Write($"Size difference: {oldSize} MB -> {newSize} MB", ConsoleColor.DarkCyan);
             }
 
             if (deleteFiles) DeleteFile(inputFile);
-            else UI.Write("No files deleted.");
+            else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
         }
         else
         {
@@ -565,23 +565,23 @@ void DeleteFile(string file)
         foreach(string binFile in GetBinFilesFromCue(file))
         {
             File.Delete(binFile);
-            UI.Write($"Deleted \"{binFile}\"");
+            UI.Write($"Deleted \"{binFile}\"", ConsoleColor.DarkYellow);
         }
         
         File.Delete(file);
-        UI.Write($"Deleted \"{file}\"");
+        UI.Write($"Deleted \"{file}\"", ConsoleColor.DarkYellow);
 
         string? dir = Path.GetDirectoryName(file);
         if (dir != null && moveToParent)
         {
             Directory.Delete(dir);
-            UI.Write($"Deleted directory \"{dir}\"");
+            UI.Write($"Deleted directory \"{dir}\"", ConsoleColor.DarkYellow);
         }
     }
     else
     {
         File.Delete(file);
-        UI.Write($"Deleted \"{file}\"");
+        UI.Write($"Deleted \"{file}\"", ConsoleColor.DarkYellow);
     }
 }
 
