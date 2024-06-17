@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Text;
+
 
 namespace ConsoleUI
 {
@@ -328,12 +330,15 @@ namespace ConsoleUI
         }
 
         /// <summary>
-        /// Splits an input string by " and returns a list of valid file names found.
+        /// Returns a list of files that exist based on an input string.
+        /// Can be filtered by an extension.
         /// </summary>
+        /// <param name="ext"></param>
         /// <returns></returns>
-        public static List<string> GetFiles()
+        public static List<string> GetFiles(string? ext = null)
         {
-            string type = "file path";
+            string type = "directory/file path(s)";
+            List<string> validFiles = [];
             List<string> output = [];
 
             UI.Input(type);
@@ -347,25 +352,72 @@ namespace ConsoleUI
 
             if (input != null)
             {
-                string[] fileList;
+                List<string> items = [];
 
-                // Filenames with spaces are wrapped in '"' what drag n' dropped into the console
-                if (input.Contains('"'))
-                {
-                    fileList = input.Split('"');
-                }
-                else
-                {
-                    fileList = input.Split(" ");
-                }
+                // I guess we're reading inputs per-character smh
+                bool inQuotes = false;
+                StringBuilder itemSb = new StringBuilder();
 
-                foreach (string file in fileList)
+                foreach (char c in input)
                 {
-                    if (File.Exists(file))
+                    if (c == '"')
                     {
-                        output.Add(file);
+                        inQuotes = !inQuotes;
+                        items.Add(itemSb.ToString());
+                        itemSb.Clear();
+                        continue;
+                    }
+                    else
+                    {
+                        if (char.IsWhiteSpace(c) && !inQuotes)
+                        {
+                            items.Add(itemSb.ToString());
+                            itemSb.Clear();
+                            continue;
+                        }
+                        else
+                        {
+                            itemSb.Append(c);
+                        }
                     }
                 }
+
+                // Add last item to list
+                if (itemSb.Length > 0)
+                {
+                    items.Add(itemSb.ToString());
+                    itemSb.Clear();
+                }
+
+                foreach (string item in items)
+                {
+                    if (File.Exists(item))
+                    {
+                        validFiles.Add(item);
+                    }
+                    if (Directory.Exists(item))
+                    {
+                        string[] files = Directory.GetFiles(item);
+
+                        foreach (string file in files)
+                        {
+                            if (File.Exists (file)) validFiles.Add(file);
+                        }
+                    }
+                }
+            }
+
+            // Filter by extension
+            if (ext != null)
+            {
+                foreach (string file in validFiles)
+                {
+                    if (Path.GetExtension(file).ToLower() ==  ext.ToLower()) output.Add(file);
+                }
+            }
+            else
+            {
+                output = validFiles;
             }
 
             return output;
@@ -379,6 +431,7 @@ namespace ConsoleUI
         public static string? GetDirectory(string? defaultValue = null)
         {
             string type = "directory";
+
             string? output = defaultValue;
 
             UI.Input(type, defaultValue);
@@ -413,9 +466,9 @@ namespace ConsoleUI
             {
                 case "!log":
 
-                    StandardCommandWriteLine("Attempting to open log file...");
+                    ConsoleUIWrite("Attempting to open log file...");
                     if (File.Exists(logPath)) Process.Start("notepad.exe", logPath);
-                    else StandardCommandWriteLine("\"log.txt\" does not exist!");
+                    else ConsoleUIWrite("\"log.txt\" does not exist!");
 
                     result = true;
                     break;
@@ -424,7 +477,7 @@ namespace ConsoleUI
                     if (File.Exists(logPath))
                     {
                         File.Delete(logPath);
-                        StandardCommandWriteLine("Deleted \"log.txt\"");
+                        ConsoleUIWrite("Deleted \"log.txt\"");
                     }
 
                     result = true;
@@ -433,18 +486,18 @@ namespace ConsoleUI
                     break;
             }
 
-            UI.Pause();
+            if (result) UI.Pause();
 
             return result;
         }
 
         static void StandardCommandAccepted(string command)
         {
-            StandardCommandWriteLine($"\"{command}\" recognised.");
+            ConsoleUIWrite($"\"{command}\" recognised.");
             UI.Pause();
         }
 
-        static void StandardCommandWriteLine(string text)
+        static void ConsoleUIWrite(string text)
         {
             Console.WriteLine($"ConsoleUI: {text}");
         }
