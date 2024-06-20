@@ -1,5 +1,4 @@
 ﻿using ConsoleUI;
-using System.IO.Compression;
 
 Console.Title = "ChdMan Menu";
 
@@ -12,10 +11,11 @@ List<string> cueFiles = new();
 List<string> binFiles = new();
 List<string> gdiFiles = new();
 
-bool usingApplicationDirectory = false;
+string fileSummary = "";
 
 bool deleteFiles = false;
 bool moveToParent = false;
+bool moveToChild = false;
 
 
 // MAIN
@@ -23,6 +23,7 @@ if (FindChdmanExe())
 {
     MainMenu();
 }
+
 UI.Header("Goodbye", true);
 UI.Pause();
 
@@ -32,158 +33,105 @@ void MainMenu()
 {
     while (true)
     {
-        deleteFiles = false;
-        moveToParent = false;
+        Menu menu = new Menu();
 
-        UI.Header("Load Files");
-        UI.Write($"Found chdman.exe at: \"{chdmanPath}\"", ConsoleColor.Green);
-        UI.Write();
-        UI.Write("Enter files or directories containing files to process.");
-        UI.Write();
-        UI.Write("Leave blank to use this application's directory.");
-        UI.Write();
+        menu.description = PrintFiles();
 
-        List<string> fileList = Input.GetFiles();
+        menu.Add("Import Files...", ImportFiles);
 
-        if (fileList.Count == 0)
+        if (isoFiles.Count > 0 || cueFiles.Count > 0 || binFiles.Count > 0 || gdiFiles.Count > 0)
         {
-            usingApplicationDirectory = true;
-            fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories).ToList();
+            menu.Add("Create CD CHD file(s)", CueGdiIsoToChd, "PSX, Dreamcast, NeoGeo CD, (some) PS2");
+            menu.Add("Create DVD CHD file(s)", CueGdiIsoToChdDvd, "PS2 (default hunk size)");
+            menu.Add("Create DVD CHD file(s)", CueGdiIsoToChdPsp, "PPSSPP (2048 hunk size)");
         }
 
-        PopulateFileLists(fileList);
-        ProcessMenu();
+        if (chdFiles.Count > 0)
+        {
+            menu.Add("Extract DVD CHD to ISO", ExtractDvdToIso);
+            menu.Add("Extract CD CHD to CUE/BIN", ExtractCdChdToCueBin);
+            menu.Add("Extract CD CHD to GDI", ExtractCdChdToGdi);
+        }
+
+        menu.Make();
     }
 }
 
-
-void ProcessMenu()
+void ImportFiles()
 {
-    int? processingOption;
+    UI.Header("Import Files");
+    UI.Write("Enter files or directories containing files to process.");
+    UI.Write();
+    UI.Write("Leave blank to use this application's directory.");
+    UI.Write();
 
-    // Select processing option
-    while (true)
+    List<string> fileList = Input.GetFiles();
+
+    if (fileList.Count == 0)
     {
-        UI.Header("Valid Files");
-        if (usingApplicationDirectory)
-        {
-            UI.Write($"Using current application directory ({rootDirectory})");
-        }
-
-        PrintFiles();
-
-        UI.Header("Main Menu", false);
-        UI.Option("[1] Create CD CHD file(s) - PSX, Dreamcast, NeoGeo CD, (some) PS2");
-        UI.Option("[2] Create DVD CHD file(s) - PS2 (default hunk size)");
-        UI.Option("[3] Create DVD CHD file(s) - PPSSPP (2048 hunk size)");
-        UI.Write();
-        UI.Option("[4] Extract DVD CHD to ISO");
-        UI.Option("[5] Extract CD CHD to CUE/BIN");
-        UI.Option("[6] Extract CD CHD to GDI");
-        UI.Write();
-
-        int? input = Input.GetInteger();
-
-        if (input >= 1 && input <= 6)
-        {
-            processingOption = input;
-            break;
-        }
+        fileList = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories).ToList();
     }
 
-    // Select delete files
-    while (true)
-    {
-        bool escape = false;
-
-        UI.Header("Delete Files?");
-        UI.Write("\nDelete source file(s) after compression/extraction?\n");
-        UI.Option("[1] No");
-        UI.Option("[2] Yes");
-
-        int? inputDel = Input.GetInteger();
-
-        switch (inputDel)
-        {
-            case 1:
-                deleteFiles = false;
-                escape = true;
-                break;
-            case 2:
-                deleteFiles = true;
-                escape = true;
-                break;
-            default:
-                escape = false;
-                break;
-        }
-
-        if (escape) break;
-    }
-
-    // Select move up folder
-    while (true)
-    {
-        moveToParent = false;
-
-        UI.Header("Output Location");
-        UI.Write("Move output CHD files into the parent directory of their source file(s)?");
-        UI.Write();
-        UI.Write("E.g. Use this if CUE files are contained within their own subfolder with associated BIN files.", ConsoleColor.Gray);
-        UI.Write();
-        UI.Option("[1] No");
-        UI.Option("[2] Yes");
-
-        int? inputMoveUp = Input.GetInteger();
-        if (inputMoveUp == 1)
-        {
-            moveToParent = false;
-            break;
-        }
-        if (inputMoveUp == 2)
-        {
-            moveToParent = true;
-            break;
-        }
-    }
-
-    // Start Processing
-    if (processingOption != null)
-    {
-        switch (processingOption)
-        {
-            case 1:
-                CueGdiIsoToChd();
-                break;
-            case 2:
-                CueGdiIsoToChdDvd();
-                break;
-            case 3:
-                CueGdiIsoToChdPsp();
-                break;
-            case 4:
-                ExtractDvdToIso();
-                break;
-            case 5:
-                ExtractCdChdToCueBin();
-                break;
-            case 6:
-                ExtractCdChdToGdi();
-                break;
-            default:
-                UI.Error($"Processing option \"{processingOption}\" not recognised!");
-                break;
-        }
-    }
-    else
-    {
-        UI.Error("No processing option selected!");
-    }
+    PopulateFileLists(fileList);
 }
 
+void AskDeleteFiles()
+{
+    Menu menu = new();
+
+    menu.description = "Delete source files after compression/extraction?";
+
+    menu.Add("Yes", DeleteFiles);
+    menu.Add("No", menu.Null);
+
+    menu.Make();
+}
+
+void DeleteFiles()
+{
+    deleteFiles = true;
+}
+
+void AskMoveToParent()
+{
+    Menu menu = new();
+
+    menu.description = "Move output CHD files into the parent directory of their source file(s)?" +
+        "\nE.g. Use this if CUE files are contained within their own subfolder with associated BIN files.";
+
+    menu.Add("Yes", MoveToParent);
+    menu.Add("No", menu.Null);
+
+    menu.Make();
+}
+
+void MoveToParent()
+{
+    moveToParent = true;
+}
+
+void AskCreateChildDirectory()
+{
+    Menu menu = new();
+
+    menu.description = "Move output CUE + BIN files to child directory?";
+
+    menu.Add("Yes", MoveToChild);
+    menu.Add("No", menu.Null);
+
+    menu.Make();
+}
+
+void MoveToChild()
+{
+    moveToChild = true;
+}
 
 void CueGdiIsoToChd()
 {
+    AskDeleteFiles();
+    AskMoveToParent();
+
     UI.Header("CD to CHD");
 
     List<string> files = isoFiles.Concat(cueFiles).Concat(gdiFiles).ToList();
@@ -222,6 +170,9 @@ void CueGdiIsoToChd()
 
 void CueGdiIsoToChdDvd()
 {
+    AskDeleteFiles();
+    AskMoveToParent();
+
     UI.Header("DVD to CHD");
 
     List<string> files = isoFiles.Concat(cueFiles).Concat(gdiFiles).ToList();
@@ -259,6 +210,9 @@ void CueGdiIsoToChdDvd()
 
 void CueGdiIsoToChdPsp()
 {
+    AskDeleteFiles();
+    AskMoveToParent();
+
     UI.Header("PSP DVD to CHD");
 
     List<string> files = isoFiles.Concat(cueFiles).Concat(gdiFiles).ToList();
@@ -296,6 +250,8 @@ void CueGdiIsoToChdPsp()
 
 void ExtractDvdToIso()
 {
+    AskDeleteFiles();
+
     UI.Header("CHD to ISO");
 
     List<string> files = chdFiles;
@@ -326,6 +282,9 @@ void ExtractDvdToIso()
 
 void ExtractCdChdToCueBin()
 {
+    AskDeleteFiles();
+    AskCreateChildDirectory();
+
     UI.Header("CHD to CUE/BIN");
 
     List<string> files = chdFiles;
@@ -337,6 +296,25 @@ void ExtractCdChdToCueBin()
     {
         string inputFile = files[i];
         string outputFile = Path.ChangeExtension(inputFile, ".cue");
+
+        if (moveToChild)
+        {
+            string? dir = Path.GetDirectoryName(inputFile);
+
+            if (dir != null)
+            {
+                string outputChildDir = $"{dir}\\{Path.GetFileNameWithoutExtension(inputFile)}\\";
+                string outputFileName = Path.GetFileName(outputFile);
+
+                Directory.CreateDirectory(outputChildDir);
+
+                outputFile = outputChildDir + outputFileName;
+            }
+            else
+            {
+                UI.Error("Somehow the directory, within which the input file, is located does not exist.");
+            }
+        }
 
         if (RunChdman($"extractcd -i \"{inputFile}\" -o \"{outputFile}\""))
         {
@@ -356,6 +334,8 @@ void ExtractCdChdToCueBin()
 
 void ExtractCdChdToGdi()
 {
+    AskDeleteFiles();
+
     UI.Header("CHD to CUE/BIN");
 
     List<string> files = chdFiles;
@@ -515,7 +495,7 @@ bool RunChdman(string arg = "")
 
 void PopulateFileLists(List<string> files)
 {
-    // Reset lists
+    // Clear currently loaded files
     chdFiles.Clear();
     isoFiles.Clear();
     cueFiles.Clear();
@@ -549,16 +529,18 @@ double GetFileSizeMb(string file)
 }
 
 
-void PrintFiles()
+string PrintFiles()
 {
-    UI.Write("Loaded files:");
-    UI.Write();
-    UI.Write($"\tFound {cueFiles.Count()} .CUE files");
-    UI.Write($"\tFound {binFiles.Count()} .BIN files");
-    UI.Write($"\tFound {isoFiles.Count()} .ISO files");
-    UI.Write($"\tFound {gdiFiles.Count()} .GDI files");
-    UI.Write($"\tFound {chdFiles.Count()} .CHD files");
-    UI.Write();
+    fileSummary = string.Empty;
+
+    fileSummary += "Imported files:\n\n";
+    fileSummary += $"\tFound {cueFiles.Count()} .CUE files\n";
+    fileSummary += $"\tFound {binFiles.Count()} .BIN files\n";
+    fileSummary += $"\tFound {isoFiles.Count()} .ISO files\n";
+    fileSummary += $"\tFound {gdiFiles.Count()} .GDI files\n";
+    fileSummary += $"\tFound {chdFiles.Count()} .CHD files\n";
+
+    return fileSummary;
 }
 
 
