@@ -28,7 +28,6 @@ UI.Header("Goodbye", true);
 UI.Pause();
 
 
-// HERE LIE METHODS
 void MainMenu()
 {
     while (true)
@@ -114,7 +113,8 @@ void AskCreateChildDirectory()
 {
     Menu menu = new();
 
-    menu.description = "Move output CUE + BIN files to child directory?";
+    menu.description = "Move output CUE + BIN files to child directory?" +
+        "\nThis will create a new child directory with the same name as the input (CUE) file.";
 
     menu.Add("Yes", MoveToChild);
     menu.Add("No", menu.Null);
@@ -403,6 +403,13 @@ void ShowProgress(int current, int total)
 
 void FinishedScreen(List<string> failList)
 {
+    // Clear file lists
+    chdFiles.Clear();
+    isoFiles.Clear();
+    cueFiles.Clear();
+    binFiles.Clear();
+    gdiFiles.Clear();
+
     UI.Header("Done!", false);
 
     if (failList.Count > 0)
