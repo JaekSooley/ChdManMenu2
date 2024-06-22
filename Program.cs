@@ -1,4 +1,5 @@
 ﻿using ConsoleUI;
+using System.IO.Compression;
 
 Console.Title = "ChdMan Menu";
 
@@ -10,6 +11,7 @@ List<string> isoFiles = new();
 List<string> cueFiles = new();
 List<string> binFiles = new();
 List<string> gdiFiles = new();
+List<string> zipFiles = new();
 
 string fileSummary = "";
 
@@ -56,6 +58,7 @@ void MainMenu()
     }
 }
 
+
 void ImportFiles()
 {
     UI.Header("Import Files");
@@ -72,7 +75,17 @@ void ImportFiles()
     }
 
     PopulateFileLists(fileList);
+
+    // Extract and populate file lists with zip files
+    if (zipFiles.Count > 0)
+    {
+        foreach (string file in zipFiles)
+        {
+            ExtractZipFolder(file);
+        }
+    }
 }
+
 
 void AskDeleteFiles()
 {
@@ -86,10 +99,12 @@ void AskDeleteFiles()
     menu.Make();
 }
 
+
 void DeleteFiles()
 {
     deleteFiles = true;
 }
+
 
 void AskMoveToParent()
 {
@@ -104,10 +119,12 @@ void AskMoveToParent()
     menu.Make();
 }
 
+
 void MoveToParent()
 {
     moveToParent = true;
 }
+
 
 void AskCreateChildDirectory()
 {
@@ -122,10 +139,12 @@ void AskCreateChildDirectory()
     menu.Make();
 }
 
+
 void MoveToChild()
 {
     moveToChild = true;
 }
+
 
 void CueGdiIsoToChd()
 {
@@ -363,6 +382,39 @@ void ExtractCdChdToGdi()
     FinishedScreen(failList);
 }
 
+
+List<string> ExtractZipFolder(string file)
+{
+    List<string> extractedFiles = new();
+
+    string? destination = Path.GetDirectoryName(file);
+
+    if (destination != null)
+    {
+        if (!Directory.Exists(destination))
+        {
+            Directory.CreateDirectory(destination);
+        }
+        else
+        {
+            UI.Warning($"Directory \"{destination}\" already exists! " +
+                $"(I'm extracting everything to this location anyway, because I'm too lazy" +
+                $"to set up the logic to not to that.");
+        }
+
+        using (ZipArchive archive = ZipFile.OpenRead(file))
+        {
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                entry.ExtractToFile(destination);
+            }
+        }
+    }
+
+    return extractedFiles;
+}
+
+
 void OnCompressionSuccess(string inputFile, string outputFile)
 {
     // Show file size difference
@@ -396,10 +448,12 @@ void OnCompressionSuccess(string inputFile, string outputFile)
     else UI.Write("No files deleted.", ConsoleColor.DarkCyan);
 }
 
+
 void ShowProgress(int current, int total)
 {
     UI.Write($"\nProgress: {current} of {total} done\n", ConsoleColor.Cyan);
 }
+
 
 void FinishedScreen(List<string> failList)
 {
@@ -521,6 +575,8 @@ void PopulateFileLists(List<string> files)
             if (ext.ToLower() == ".cue") cueFiles.Add(file);
             if (ext.ToLower() == ".bin") binFiles.Add(file);
             if (ext.ToLower() == ".gdi") gdiFiles.Add(file);
+
+            if (ext.ToLower() == ".zip") zipFiles.Add(file);
         }
         else
         {
