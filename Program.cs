@@ -79,10 +79,7 @@ void ImportFiles()
     // Extract and populate file lists with zip files
     if (zipFiles.Count > 0)
     {
-        foreach (string file in zipFiles)
-        {
-            ExtractZipFolder(file);
-        }
+        AskExtractZip();
     }
 }
 
@@ -109,7 +106,7 @@ void DeleteFiles()
 void AskMoveToParent()
 {
     Menu menu = new();
-
+    menu.name = "Move to parent";
     menu.description = "Move output CHD files into the parent directory of their source file(s)?" +
         "\nE.g. Use this if CUE files are contained within their own subfolder with associated BIN files.";
 
@@ -129,7 +126,7 @@ void MoveToParent()
 void AskCreateChildDirectory()
 {
     Menu menu = new();
-
+    menu.name = "Create Child Directory";
     menu.description = "Move output CUE + BIN files to child directory?" +
         "\nThis will create a new child directory with the same name as the input (CUE) file.";
 
@@ -143,6 +140,32 @@ void AskCreateChildDirectory()
 void MoveToChild()
 {
     moveToChild = true;
+}
+
+
+void AskExtractZip()
+{
+    Menu menu = new();
+    menu.name = "Extract Zip";
+    menu.description = "Extract zipped folders and add files to queue?";
+
+    menu.Add("Yes", ExtractZipFiles);
+    menu.Add("No", menu.Null);
+
+    menu.Make();
+}
+
+
+void ExtractZipFiles()
+{
+    // Extract and populate file lists with zip files
+    if (zipFiles.Count > 0)
+    {
+        foreach (string file in zipFiles)
+        {
+            ExtractZipFolder(file);
+        }
+    }
 }
 
 
@@ -383,6 +406,7 @@ void ExtractCdChdToGdi()
 }
 
 
+
 List<string> ExtractZipFolder(string file)
 {
     List<string> extractedFiles = new();
@@ -409,6 +433,12 @@ List<string> ExtractZipFolder(string file)
                 entry.ExtractToFile(destination);
             }
         }
+
+        // Get new files
+
+        // Sort new files into lists
+
+        // Do whatever idk lol
     }
 
     return extractedFiles;
